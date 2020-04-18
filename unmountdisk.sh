@@ -34,12 +34,6 @@ set -ex
 
 . ./vars.sh
 
-if [ -z "$DISK_HOME" ]; then
-    DISK_HOME=`dirname $0`"/disks"
-else
-    DISK_HOME=`realpath $DISK_HOME`
-fi
-
 # Get disk info
 if [ ! -f "$DISK_HOME/$DISK_NAME.mounted" ];
 then
