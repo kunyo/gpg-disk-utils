@@ -26,14 +26,18 @@ set -ex
 
 . ./vars.sh
 
-# Configuration
 DISK_NAME=$1
 MOUNT_POINT=$2
+USAGE=<<EOF
+Usage: $0 [OPTIONS] disk-name [mount-point] <auto>
+EOF
+
 if [ ! -n "$DISK_NAME" ];
 then
-    echo "Usage: $0 disk-name [mount-point] <auto>"
+    echo -e $USAGE
     exit 1
 fi
+
 if [ ! -n "$MOUNT_POINT" ];
 then
     echo "Warning: No MOUNT_POINT env var set. Using $HOME/mounted-$DISK_NAME"
@@ -70,8 +74,9 @@ mkdir "$MOUNT_POINT"
 LO_MOUNT=`sudo losetup -f`
 VG_MOUNT=`date +%s | sha1sum | head -c 8`
 sudo losetup $LO_MOUNT "$DISK_HOME/$DISK_NAME.disk"
-gpg --no-default-keyring --secret-keyring "$KEY_HOME/$KEYRING_FILENAME" --keyring "$KEY_HOME/$KEYRING_FILENAME" --trust-model always --decrypt "$DISK_HOME/$DISK_NAME.key.gpg" | sudo cryptsetup luksOpen $LO_MOUNT $VG_MOUNT -d -
+gpg --batch --yes --trust-model always --decrypt "$DISK_HOME/$DISK_NAME.key.gpg" | sudo cryptsetup luksOpen $LO_MOUNT $VG_MOUNT -d -
 sudo mount /dev/mapper/$VG_MOUNT "$MOUNT_POINT"
 echo "$LO_MOUNT:$VG_MOUNT:$MOUNT_POINT" >"$DISK_HOME/$DISK_NAME.mounted"
 sudo -k
+unset PASSPHRASE
 exit 0
