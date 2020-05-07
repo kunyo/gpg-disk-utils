@@ -23,6 +23,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Check configuration
+KEY_LENGTH=4096
 OWNER_NAME=$1
 if [ ! -n "$OWNER_NAME" ];
 then
@@ -39,7 +40,7 @@ MY_VAR=$(cat <<EOF
 %echo Generating\n
 %ask-passphrase\n
 Key-Type: RSA\n
-Key-Length: 2048\n
+Key-Length: $KEY_LENGTH\n
 Name-Real: $OWNER_NAME disk encryption\n
 Expire-Date: 0\n
 %commit\n
@@ -47,4 +48,4 @@ Expire-Date: 0\n
 EOF
 )
 # And generate
-echo -e $MY_VAR | gpg2 --no-default-keyring --secret-keyring keyrings/secret.gpg --keyring keyrings/public.gpg --trustdb-name keyrings/trustdb.gpg --batch --gen-key
+echo -e $MY_VAR | gpg --trust-model always --batch --gen-key
