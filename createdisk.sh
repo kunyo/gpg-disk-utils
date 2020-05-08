@@ -63,7 +63,7 @@ test -d "$KEY_HOME" || mkdir -p "$KEY_HOME" && chmod 700 "$KEY_HOME"
 # Create the key
 # First try to retrieve the DISK_RECOVERY_KEY_ID
 #gpg --no-default-keyring --secret-keyring "$KEY_HOME/secret.gpg" --keyring "$KEY_HOME/public.gpg" --trustdb-name "$KEY_HOME/trustdb.gpg" --keyserver hkp://pgp.surfnet.nl:80 --recv-keys $DISK_RECOVERY_KEY_ID
-head -c66 /dev/random | openssl base64 -A  | gpg --no-default-keyring --secret-keyring "$KEY_HOME/$KEYRING_FILENAME" --keyring "$KEY_HOME/$KEYRING_FILENAME" --trust-model always --armor --encrypt -r $DISK_KEY_ID -r $DISK_RECOVERY_KEY_ID >"$DISK_HOME/$DISK_NAME.key.gpg"
+head -c66 /dev/random | openssl base64 -A  | gpg --trust-model always --armor --encrypt -r $DISK_KEY_ID -r $DISK_RECOVERY_KEY_ID >"$DISK_HOME/$DISK_NAME.key.gpg"
 LO_MOUNT=`sudo losetup -f`
 VG_MOUNT=`date +%s | sha1sum | head -c 8`
 TMP_MOUNT=`mktemp -d`
@@ -71,8 +71,8 @@ TMP_MOUNT=`mktemp -d`
 fallocate -l "${DISK_SIZE_MB}M" "$DISK_HOME/$DISK_NAME.disk"
 sudo losetup -f "$DISK_HOME/$DISK_NAME.disk"
 sudo losetup $LO_MOUNT
-gpg --use-agent --no-default-keyring --secret-keyring "$KEY_HOME/$KEYRING_FILENAME" --keyring "$KEY_HOME/$KEYRING_FILENAME" --trust-model always --decrypt "$DISK_HOME/$DISK_NAME.key.gpg" | sudo cryptsetup luksFormat $LO_MOUNT - 
-gpg --use-agent --no-default-keyring --secret-keyring "$KEY_HOME/$KEYRING_FILENAME" --keyring "$KEY_HOME/$KEYRING_FILENAME" --trust-model always --decrypt "$DISK_HOME/$DISK_NAME.key.gpg" | sudo cryptsetup luksOpen $LO_MOUNT $VG_MOUNT -d -
+gpg --use-agent --trust-model always --decrypt "$DISK_HOME/$DISK_NAME.key.gpg" | sudo cryptsetup luksFormat $LO_MOUNT - 
+gpg --use-agent --trust-model always --decrypt "$DISK_HOME/$DISK_NAME.key.gpg" | sudo cryptsetup luksOpen $LO_MOUNT $VG_MOUNT -d -
 gnome-keyring-daemon --replace
 sudo mkfs.ext4 /dev/mapper/$VG_MOUNT
 # Now set current user as owner
