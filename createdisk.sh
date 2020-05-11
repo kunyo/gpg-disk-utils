@@ -31,7 +31,6 @@ fi
 
 # Check configuration
 DISK_NAME="$1"
-DISK_BLOCK_COUNT=`expr $2 \* 1000 \* 1000`
 DISK_SIZE_MB=$2
 DISK_KEY_ID=$3
 DISK_RECOVERY_KEY_ID=$4
@@ -58,7 +57,6 @@ fi
 
 # Force creation of DISK_HOME and KEY_HOME directories
 test -d "$DISK_HOME" || mkdir -p "$DISK_HOME"
-test -d "$KEY_HOME" || mkdir -p "$KEY_HOME" && chmod 700 "$KEY_HOME"
 
 # Create the key
 # First try to retrieve the DISK_RECOVERY_KEY_ID
@@ -67,7 +65,7 @@ head -c66 /dev/random | openssl base64 -A  | gpg --trust-model always --armor --
 LO_MOUNT=`sudo losetup -f`
 VG_MOUNT=`date +%s | sha1sum | head -c 8`
 TMP_MOUNT=`mktemp -d`
-#dd if=/dev/zero of="$DISK_HOME/$DISK_NAME.disk" bs=1024 count=$DISK_BLOCK_COUNT
+#dd if=/dev/zero of="$DISK_HOME/$DISK_NAME.disk" bs=1M count=$DISK_SIZE_MB
 fallocate -l "${DISK_SIZE_MB}M" "$DISK_HOME/$DISK_NAME.disk"
 sudo losetup -f "$DISK_HOME/$DISK_NAME.disk"
 sudo losetup $LO_MOUNT
