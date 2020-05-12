@@ -4,6 +4,3 @@
 if [ -z "$DISK_HOME" ]; then
     DISK_HOME=`realpath ~/.gpgdisks`
 fi
-
-# The filename of the gpg keyring
-KEYRING_FILENAME='disks.gpg'
