@@ -62,11 +62,13 @@ test -d "$DISK_HOME" || mkdir -p "$DISK_HOME"
 # First try to retrieve the DISK_RECOVERY_KEY_ID
 #gpg --no-default-keyring --secret-keyring "$KEY_HOME/secret.gpg" --keyring "$KEY_HOME/public.gpg" --trustdb-name "$KEY_HOME/trustdb.gpg" --keyserver hkp://pgp.surfnet.nl:80 --recv-keys $DISK_RECOVERY_KEY_ID
 head -c66 /dev/random | openssl base64 -A  | gpg --trust-model always --armor --encrypt -r $DISK_KEY_ID -r $DISK_RECOVERY_KEY_ID >"$DISK_HOME/$DISK_NAME.key.gpg"
+chmod 600 "$DISK_HOME/$DISK_NAME.key.gpg"
 LO_MOUNT=`sudo losetup -f`
 VG_MOUNT=`date +%s | sha1sum | head -c 8`
 TMP_MOUNT=`mktemp -d`
 #dd if=/dev/zero of="$DISK_HOME/$DISK_NAME.disk" bs=1M count=$DISK_SIZE_MB
 fallocate -l "${DISK_SIZE_MB}M" "$DISK_HOME/$DISK_NAME.disk"
+chmod 600 "$DISK_HOME/$DISK_NAME.disk"
 sudo losetup -f "$DISK_HOME/$DISK_NAME.disk"
 sudo losetup $LO_MOUNT
 gpg --use-agent --trust-model always --decrypt "$DISK_HOME/$DISK_NAME.key.gpg" | sudo cryptsetup luksFormat $LO_MOUNT - 
