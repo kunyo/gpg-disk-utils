@@ -6,21 +6,25 @@ sudo apt install cryptsetup
 ## Usage
 ### Create encryption key
 ```
-./createkey.sh <key name>
+./gpgdisk.sh newkey <key name>
 ```
 ### Create disk
 ```
-./createdisk.sh <disk name> <encryption key id> <recovery key id>
+./gpgdisk.sh newdisk <disk name> <encryption key id> <recovery key id>
 ```
 ### Mount disk
 ```
-./mountdisk.sh <disk name>
+./gpgdisk.sh mount <disk name>
 ```
 ### Unmount disk
 ```
-./unmountdisk.sh <disk name>
+./gpgdisk.sh unmount <disk name>
 ```
 ### Backup a disk to a portable device
 ```
-./backupdisk.sh <disk name> <device name>
+./gpgdisk.sh backup <disk name> <device name>
+```
+### Sync disk content with a disk stored on a portable device
+```
+./gpgdisk.sh sync <disk name> <device name>
 ```
