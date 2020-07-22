@@ -96,6 +96,8 @@ mount_gpg_disk(){
     sudo losetup $LO_MOUNT "$DISK_HOME/$DISK_NAME.disk"
     gpg --batch --yes --trust-model always --decrypt "$DISK_HOME/$DISK_NAME.key.gpg" | sudo cryptsetup luksOpen $LO_MOUNT $VG_MOUNT -d -
     sudo mount /dev/mapper/$VG_MOUNT "$MOUNT_POINT"
+    sudo chown `id -u`:`id -g` "$MOUNT_POINT"
+    sudo chmod 700 "$MOUNT_POINT"
     echo "$LO_MOUNT:$VG_MOUNT:$MOUNT_POINT" >"$DISK_HOME/$DISK_NAME.mounted"
 }
 
