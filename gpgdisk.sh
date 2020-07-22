@@ -48,9 +48,24 @@ EOF
 }
 
 mount_gpg_disk(){
+    FORCE=0
+    USAGE="Usage: $0 mount [OPTIONS] disk-name [mount-point] <auto>"
+
+    for i in "$@"
+    do
+    case $i in
+        --force)
+        FORCE=1
+        shift # past argument with no value
+        ;;
+        *)
+            # unknown option
+        ;;
+    esac
+    done
+    
     DISK_NAME=$1
     MOUNT_POINT=$2
-    USAGE="Usage: $0 mount [OPTIONS] disk-name [mount-point] <auto>"
 
     if [ ! -n "$DISK_NAME" ];
     then
@@ -76,18 +91,25 @@ mount_gpg_disk(){
     fi
     if [ -f "$DISK_HOME/$DISK_NAME.mounted" ];
     then
-        if [ "$3" == "auto" ];
+        echo "Error: Disk $DISK_NAME is already mounted!"
+        if [ $FORCE -eq 0 ];
         then
-            exit 0
+            exit 1    
         else
-            echo "Error: Disk $DISK_NAME is already mounted!"
-            exit 1
+            echo "Removing disk.mounted file: $DISK_HOME/$DISK_NAME.mounted"
+            rm "$DISK_HOME/$DISK_NAME.mounted"
         fi
     fi
     if [ -f "$MOUNT_POINT" ];
     then
         echo "Error: $MOUNT_POINT already exists!"
-        exit 1
+        if [ $FORCE -eq 0 ];
+        then
+            exit 1    
+        else
+            echo "Removing mount point: $MOUNT_POINT"
+            rm -rf "$MOUNT_POINT"
+        fi
     fi
 
     mkdir "$MOUNT_POINT"
