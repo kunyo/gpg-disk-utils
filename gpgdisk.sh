@@ -149,6 +149,12 @@ unmount_gpg_disk(){
     rmdir "$MOUNT_POINT"
 }
 
+unmount_all_gpg_disks(){
+    for f in `find $DISK_HOME -type f -iname "*.mounted" -exec basename -s .mounted {} \;`; do
+        unmount_gpg_disk $f
+    done
+}
+
 sync_gpg_disk(){
     DISK_NAME=$1
     DEVICE_NAME=$2
@@ -362,6 +368,11 @@ case $GPGDISKACTION in
     unmount)
     unmount_gpg_disk $@
     sudo -k    
+    gpgconf --kill gpg-agent
+    ;;
+    unmount-all)
+    unmount_all_gpg_disks $@
+    sudo -k
     gpgconf --kill gpg-agent
     ;;
     sync)
