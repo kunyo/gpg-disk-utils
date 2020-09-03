@@ -362,22 +362,18 @@ case $GPGDISKACTION in
     ;;    
     mount)
     mount_gpg_disk $@
-    sudo -k
     gpgconf --kill gpg-agent
     ;;
     unmount)
     unmount_gpg_disk $@
-    sudo -k    
     gpgconf --kill gpg-agent
     ;;
     unmount-all)
     unmount_all_gpg_disks $@
-    sudo -k
     gpgconf --kill gpg-agent
     ;;
     sync)
     sync_gpg_disk $@
-    sudo -k
     gpgconf --kill gpg-agent
     ;;
 esac
