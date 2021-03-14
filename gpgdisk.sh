@@ -100,7 +100,7 @@ mount_gpg_disk(){
             rm "$DISK_HOME/$DISK_NAME.mounted"
         fi
     fi
-    if [ -f "$MOUNT_POINT" ];
+    if [ -f "$MOUNT_POINT" ] || [ -d "$MOUNT_POINT" ];
     then
         echo "Error: $MOUNT_POINT already exists!"
         if [ $FORCE -eq 0 ];
